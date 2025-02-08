@@ -1,50 +1,50 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HeroService } from '../hero.service';
 import { Hero } from '../hero';
-import {HeroService} from '../hero.service';
 
 @Component({
   selector: 'app-hero-form',
   templateUrl: './hero-form.component.html',
   styleUrls: ['./hero-form.component.css']
 })
-export class HeroFormComponent {
+export class HeroFormComponent implements OnInit {
 
-  constructor(private heroService: HeroService) {}
-
-  powers = ['Really Smart', 'Super Flexible',
-            'Super Hot', 'Weather Changer'];
-
-  name: string = 'Dr. IQ';
-  power: string = this.powers[0];
-  age: number = 50;
-  origin: string = 'Pluto';
-  weakness: string = 'Emotions';
-  ally: string = 'Batman';
-
-  model: Hero = { name: this.name, power: this.power, age: this.age, origin: this.origin, weakness: this.weakness, ally: this.ally } as Hero;
-
+  heroForm: FormGroup;
+  powers = ['Really Smart', 'Super Flexible', 'Super Hot', 'Weather Changer'];
   submitted = false;
 
-
-
-  onSubmit() { this.submitted = true; }
-
-
-  newHero() {
-      this.heroService.addHero(this.model)
-        .subscribe();
+  constructor(private fb: FormBuilder, private heroService: HeroService) {
+    this.heroForm = this.fb.group({
+      name: ['Dr. IQ', Validators.required],
+      age: [50],
+      power: [this.powers[0], Validators.required],
+      origin: ['Pluto'],
+      weakness: ['Emotions'],
+      ally: ['Batman']
+    });
   }
 
-  //////// NOT SHOWN IN DOCS ////////
+  ngOnInit(): void {
 
-  // Reveal in html:
-  //   Name via form.controls = {{showFormControls(heroForm)}}
-  showFormControls(form: any) {
-    return form && form.controls.name &&
-    form.controls.name.value; // Dr. IQ
   }
 
-  /////////////////////////////
+  onSubmit(): void {
+    this.submitted = true;
+    if (this.heroForm.valid) {
+      const hero: Hero = this.heroForm.value as Hero;
+      this.heroService.addHero(hero).subscribe();
+    }
+  }
 
+  newHero(): void {
+    this.heroForm.reset({
+      name: 'Dr. IQ',
+      age: 50,
+      power: this.powers[0],
+      origin: 'Pluto',
+      weakness: 'Emotions',
+      ally: 'Batman'
+    });
+  }
 }
