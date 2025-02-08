@@ -24,10 +24,17 @@ export class HeroesComponent implements OnInit {
             .subscribe((heroes) => (this.heroes = heroes));
     }
 
-    add(name: string): void {
+    add(name: string, power: string, age: number, origin: string, weakness: string, ally: string): void {
       name = name.trim();
+      power = power.trim();
+      age = age
+      origin = origin.trim();
+      weakness = weakness.trim();
+      ally = ally.trim();
+
       if (!name) { return; }
-      this.heroService.addHero({ name } as Hero)
+
+      this.heroService.addHero({ name, power, age, origin, weakness, ally } as Hero)
         .subscribe(hero => {
           this.heroes.push(hero);
         });
@@ -37,4 +44,6 @@ export class HeroesComponent implements OnInit {
       this.heroes = this.heroes.filter(h => h !== hero);
       this.heroService.deleteHero(hero.id).subscribe();
     }
+
+  protected readonly Number = Number;
 }

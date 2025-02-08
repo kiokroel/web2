@@ -1,16 +1,30 @@
 <div *ngIf="hero">
-      <h2>{{hero.name | uppercase}} Details</h2>
-      <div>id: {{hero.id}}</div>
-      <div>
-          <label for="hero-name">Hero name: </label>
-          <input
-              id="hero-name"
-              [(ngModel)]="hero.name"
-              placeholder="name"
-          />
-      </div>
-    </div>
-
-<button type="button" (click)="goBack()">go back</button>
-
-<button type="button" (click)="save()">save</button>
+  <h2>{{hero.name | uppercase}} Details</h2>
+  <div><span>id: </span>{{hero.id}}</div>
+  <div>
+    <label for="name">Hero name: </label>
+    <input id="name" [(ngModel)]="hero.name" placeholder="name">
+  </div>
+  <div>
+    <label for="power">Power: </label>
+    <input id="power" [(ngModel)]="hero.power" placeholder="power">
+  </div>
+  <div>
+    <label for="age">Age: </label>
+    <input id="age" [(ngModel)]="hero.age" placeholder="age">
+  </div>
+  <div>
+    <label for="origin">Origin: </label>
+    <input id="origin" [(ngModel)]="hero.origin" placeholder="origin">
+  </div>
+  <div>
+    <label for="weakness">Weakness: </label>
+    <input id="weakness" [(ngModel)]="hero.weakness" placeholder="weakness">
+  </div>
+  <div>
+    <label for="ally">Ally: </label>
+    <input id="ally" [(ngModel)]="hero.ally" placeholder="ally">
+  </div>
+</div>
+<button (click)="goBack()">go back</button>
+<button (click)="save()">save</button>

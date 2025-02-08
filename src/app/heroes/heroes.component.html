@@ -20,14 +20,30 @@
     <label for="new-hero">Hero name: </label>
     <input id="new-hero" #heroName />
 
+    <label for="new-hero-power">Power: </label>
+    <input id="new-hero-power" #heroPower />
+
+    <label for="new-hero-age">Age: </label>
+    <input id="new-hero-age" type="number" #heroAge />
+
+    <label for="new-hero-origin">Origin: </label>
+    <input id="new-hero-origin" #heroOrigin />
+
+    <label for="new-hero-weakness">Weakness: </label>
+    <input id="new-hero-weakness" #heroWeakness />
+
+    <label for="new-hero-ally">Ally: </label>
+    <input id="new-hero-ally" #heroAlly />
+
     <!-- (click) passes input value to add() and then clears the input -->
     <button
-        type="button"
-        class="add-button"
-        (click)="add(heroName.value); heroName.value=''"
-    >
-        Add hero
-    </button>
+    type="button"
+    class="add-button"
+    (click)="add(heroName.value, heroPower.value, Number(heroAge.value), heroOrigin.value, heroWeakness.value, heroAlly.value);
+             heroName.value=''; heroPower.value=''; heroAge.value=''; heroOrigin.value=''; heroWeakness.value=''; heroAlly.value=''"
+  >
+    Add hero
+  </button>
 </div>
 
 
