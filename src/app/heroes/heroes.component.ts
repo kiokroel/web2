@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
@@ -7,12 +7,13 @@ import { HeroService } from '../hero.service';
     selector: 'app-heroes',
     templateUrl: './heroes.component.html',
     styleUrls: ['./heroes.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class HeroesComponent implements OnInit {
     heroes: Hero[] = [];
 
-    constructor(private heroService: HeroService) {}
+    constructor(private heroService: HeroService, private cdr: ChangeDetectorRef) {}
 
     ngOnInit(): void {
         this.getHeroes();
@@ -21,7 +22,9 @@ export class HeroesComponent implements OnInit {
     getHeroes(): void {
         this.heroService
             .getHeroes()
-            .subscribe((heroes) => (this.heroes = heroes));
+            .subscribe((heroes) => {
+              this.heroes = heroes;
+              this.cdr.markForCheck();});
     }
 
     add(name: string, power: string, age: number, origin: string, weakness: string, ally: string): void {
@@ -37,12 +40,14 @@ export class HeroesComponent implements OnInit {
       this.heroService.addHero({ name, power, age, origin, weakness, ally } as Hero)
         .subscribe(hero => {
           this.heroes.push(hero);
+          this.cdr.markForCheck();
         });
     }
 
     delete(hero: Hero): void {
       this.heroes = this.heroes.filter(h => h !== hero);
       this.heroService.deleteHero(hero.id).subscribe();
+      this.cdr.markForCheck();
     }
 
   protected readonly Number = Number;

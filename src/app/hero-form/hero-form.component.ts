@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeroService } from '../hero.service';
 import { Hero } from '../hero';
@@ -6,7 +6,8 @@ import { Hero } from '../hero';
 @Component({
   selector: 'app-hero-form',
   templateUrl: './hero-form.component.html',
-  styleUrls: ['./hero-form.component.css']
+  styleUrls: ['./hero-form.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeroFormComponent implements OnInit {
 

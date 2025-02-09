@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 
@@ -6,11 +11,12 @@ import { HeroService } from '../hero.service';
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
     heroes: Hero[] = [];
 
-    constructor(private heroService: HeroService) {}
+    constructor(private heroService: HeroService, private cdr: ChangeDetectorRef) {}
 
     ngOnInit(): void {
         this.getHeroes();
@@ -21,7 +27,9 @@ export class DashboardComponent implements OnInit {
             .getHeroes()
             .subscribe(
                 (heroes) =>
-                    (this.heroes = heroes.slice(1, 5))
+                {this.heroes = heroes.slice(1, 5);
+                  this.cdr.markForCheck();
+                }
             );
     }
 }

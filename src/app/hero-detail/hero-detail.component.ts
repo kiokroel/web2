@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import { Hero } from '../hero';
 
 import { ActivatedRoute } from '@angular/router';
@@ -9,14 +9,16 @@ import { HeroService } from '../hero.service';
 @Component({
   selector: 'app-hero-detail',
   templateUrl: './hero-detail.component.html',
-  styleUrl: './hero-detail.component.css'
+  styleUrl: './hero-detail.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeroDetailComponent {
 
   constructor(
     private route: ActivatedRoute,
     private heroService: HeroService,
-    private location: Location
+    private location: Location,
+    private cdr: ChangeDetectorRef
   ) {}
 
   @Input() hero?: Hero;
@@ -28,7 +30,8 @@ export class HeroDetailComponent {
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.heroService.getHero(id)
-      .subscribe(hero => this.hero = hero);
+      .subscribe(hero => {this.hero = hero;
+      this.cdr.markForCheck()});
   }
 
   goBack(): void {
