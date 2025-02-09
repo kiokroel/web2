@@ -1,10 +1,14 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit
+} from '@angular/core';
 import { Hero } from '../hero';
-
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-
 import { HeroService } from '../hero.service';
+import { Observable } from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-hero-detail',
@@ -12,16 +16,15 @@ import { HeroService } from '../hero.service';
   styleUrl: './hero-detail.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeroDetailComponent {
+export class HeroDetailComponent implements OnInit {
+  hero$: Observable<Hero> | undefined;
+  updateHero$: Observable<void> | undefined
 
   constructor(
     private route: ActivatedRoute,
     private heroService: HeroService,
     private location: Location,
-    private cdr: ChangeDetectorRef
   ) {}
-
-  @Input() hero?: Hero;
 
   ngOnInit(): void {
     this.getHero();
@@ -29,20 +32,16 @@ export class HeroDetailComponent {
 
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.heroService.getHero(id)
-      .subscribe(hero => {this.hero = hero;
-      this.cdr.markForCheck()});
+    this.hero$ = this.heroService.getHero(id);
   }
 
   goBack(): void {
     this.location.back();
   }
 
-  save(): void {
-  if (this.hero) {
-    this.heroService.updateHero(this.hero)
-      .subscribe(() => this.goBack());
+  save(hero: Hero): void {
+    this.updateHero$ = this.heroService.updateHero(hero).pipe(
+      tap(() => this.goBack()) // Выполняем навигацию после успешного обновления
+    );
   }
-}
-
 }

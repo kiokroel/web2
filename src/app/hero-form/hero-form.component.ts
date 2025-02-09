@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeroService } from '../hero.service';
 import { Hero } from '../hero';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-hero-form',
@@ -14,6 +15,8 @@ export class HeroFormComponent implements OnInit {
   heroForm: FormGroup;
   powers = ['Really Smart', 'Super Flexible', 'Super Hot', 'Weather Changer'];
   submitted = false;
+
+  private addHeroSubscription: Subscription | undefined;
 
   constructor(private fb: FormBuilder, private heroService: HeroService) {
     this.heroForm = this.fb.group({
@@ -30,11 +33,17 @@ export class HeroFormComponent implements OnInit {
 
   }
 
+  ngOnDestroy(): void {
+    if (this.addHeroSubscription) {
+      this.addHeroSubscription.unsubscribe();
+      }
+    }
+
   onSubmit(): void {
     this.submitted = true;
     if (this.heroForm.valid) {
       const hero: Hero = this.heroForm.value as Hero;
-      this.heroService.addHero(hero).subscribe();
+      this.addHeroSubscription = this.heroService.addHero(hero).subscribe();
     }
   }
 

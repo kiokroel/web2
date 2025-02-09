@@ -1,4 +1,4 @@
-<div *ngIf="hero">
+<div *ngIf="hero$ | async as hero">
   <h2>{{hero.name | uppercase}} Details</h2>
   <div><span>id: </span>{{hero.id}}</div>
   <div>
@@ -25,6 +25,8 @@
     <label for="ally">Ally: </label>
     <input id="ally" [(ngModel)]="hero.ally" placeholder="ally">
   </div>
+  <button (click)="goBack()">go back</button>
+  <button (click)="save(hero)">save</button>
 </div>
-<button (click)="goBack()">go back</button>
-<button (click)="save()">save</button>
+
+<div *ngIf="updateHero$ | async"></div>

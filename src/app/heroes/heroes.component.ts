@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-heroes',
@@ -12,6 +13,9 @@ import { HeroService } from '../hero.service';
 
 export class HeroesComponent implements OnInit {
     heroes: Hero[] = [];
+    private getHeroesSubscription: Subscription | undefined;
+    private addHeroSubscription: Subscription | undefined;
+    private deleteHeroSubscription: Subscription | undefined;
 
     constructor(private heroService: HeroService, private cdr: ChangeDetectorRef) {}
 
@@ -19,13 +23,29 @@ export class HeroesComponent implements OnInit {
         this.getHeroes();
     }
 
-    getHeroes(): void {
-        this.heroService
-            .getHeroes()
-            .subscribe((heroes) => {
-              this.heroes = heroes;
-              this.cdr.markForCheck();});
+    ngOnDestroy(): void {
+    if (this.getHeroesSubscription) {
+      this.getHeroesSubscription.unsubscribe();
+      }
+    if (this.addHeroSubscription){
+      this.addHeroSubscription.unsubscribe();
+      }
+    if (this.deleteHeroSubscription){
+      this.deleteHeroSubscription.unsubscribe()
     }
+    }
+
+    getHeroes(): void {
+        this.getHeroesSubscription = this.heroService
+            .getHeroes()
+            .subscribe(
+                (heroes) =>
+                {this.heroes = heroes;
+                  this.cdr.markForCheck();
+                }
+            );
+    }
+
 
     add(name: string, power: string, age: number, origin: string, weakness: string, ally: string): void {
       name = name.trim();
@@ -37,7 +57,7 @@ export class HeroesComponent implements OnInit {
 
       if (!name) { return; }
 
-      this.heroService.addHero({ name, power, age, origin, weakness, ally } as Hero)
+      this.addHeroSubscription = this.heroService.addHero({ name, power, age, origin, weakness, ally } as Hero)
         .subscribe(hero => {
           this.heroes.push(hero);
           this.cdr.markForCheck();
@@ -46,8 +66,7 @@ export class HeroesComponent implements OnInit {
 
     delete(hero: Hero): void {
       this.heroes = this.heroes.filter(h => h !== hero);
-      this.heroService.deleteHero(hero.id).subscribe();
-      this.cdr.markForCheck();
+      this.deleteHeroSubscription = this.heroService.deleteHero(hero.id).subscribe(()=>this.cdr.markForCheck());
     }
 
   protected readonly Number = Number;

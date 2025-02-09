@@ -6,6 +6,8 @@ import {
 } from '@angular/core';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
+import {Observable, Subscription} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
     selector: 'app-dashboard',
@@ -14,22 +16,17 @@ import { HeroService } from '../hero.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
-    heroes: Hero[] = [];
+    heroes$: Observable<Hero[]> | undefined;
 
-    constructor(private heroService: HeroService, private cdr: ChangeDetectorRef) {}
+    constructor(private heroService: HeroService) {}
 
     ngOnInit(): void {
         this.getHeroes();
     }
 
     getHeroes(): void {
-        this.heroService
-            .getHeroes()
-            .subscribe(
-                (heroes) =>
-                {this.heroes = heroes.slice(1, 5);
-                  this.cdr.markForCheck();
-                }
-            );
+      this.heroes$ = this.heroService.getHeroes().pipe(
+        map(heroes => heroes.slice(1, 5))
+      );
     }
 }
